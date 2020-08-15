@@ -1,0 +1,20 @@
+.item-selected {
+  font-weight: bold;
+  color: #17a2b8;
+  cursor: pointer;
+  border-style: solid;
+  border-color: #17a2b8;
+  border-radius: 5px;
+  border-width: 2px;
+  background-color: unset;
+}
+.item-unselected {
+  cursor: pointer;
+  background-color: unset;
+}
+.parent-selected {
+  font-weight: bold;
+  color: #17a2b8;
+  cursor: pointer;
+  background-color: unset;
+}

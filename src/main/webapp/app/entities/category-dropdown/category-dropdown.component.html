@@ -1,0 +1,110 @@
+<div class="col-12 border">
+    <div class="row">
+        <div class="btn-group" role="group" style="width: 100%">
+            <button *ngIf="creation" class="btn btn-outline-info" type="button" (click)="addNewCategoryToRoot()"
+                    ngbTooltip="Créer une nouvelle catégorie" placement="top">
+                <fa-icon icon="plus"></fa-icon>
+            </button>
+            <button class="btn btn-outline-info" type="button" (click)="expand()"
+                    ngbTooltip="Déplier" placement="top">
+                <fa-icon icon="expand"></fa-icon>
+            </button>
+            <button class="btn btn-outline-info" type="button" (click)="collapse()"
+                    ngbTooltip="Replier" placement="top">
+                <fa-icon icon="compress"></fa-icon>
+            </button>
+        </div>
+    </div>
+    <div *ngIf="allCategories_" class="row">
+        <button type="button" style="width: 100%" class="btn btn-outline-secondary" (click)="makeActive(undefined)">
+            Toutes les
+            catégories
+        </button>
+    </div>
+    <div class="row">
+        <div style="width: 100%" class="input-group mb-3">
+            <input style="width: 100%" type="text" (keyup)="search()" class="form-control" placeholder="Recherche" [(ngModel)]="query"
+                   aria-label="Recherche" aria-describedby="basic-addon2">
+            <div class="input-group-append">
+                <button (click)="cleanSearch()" class="btn btn-outline-secondary" type="button"><span><fa-icon icon="trash"></fa-icon></span>
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="row" style="max-height: 500px; overflow-y: scroll;">
+        <mat-tree style="width: 100%" [dataSource]="dataSource" [treeControl]="treeControl">
+            <!-- This is the tree node template for leaf nodes -->
+            <mat-tree-node *matTreeNodeDef="let node" matTreeNodePadding>
+                <!-- use a disabled button to provide padding for tree leaf -->
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <button class="btn" type="button" disabled></button>
+                    </div>
+                    <button type="button" (click)="makeActive(node)"
+                            [ngClass]="{
+                            'btn':true,
+                            'parent-selected':categorySelectedByLevel.includes(node),
+                            'item-selected':idCategoryModelActive_ && idCategoryModelActive_===node.uid,
+                            'item-unselected':!idCategoryModelActive_ || idCategoryModelActive_!==node.uid}"
+                    >{{node.name + ' (' + node['count'] + ')'}}</button>
+                    <div *ngIf="creation" class="input-group-append">
+                        <button class="btn" type="button" (click)="addNewItem(node)">
+                            <fa-icon icon="plus"></fa-icon>
+                        </button>
+                        <button class="btn" type="button" (click)="deleteItem(node)">
+                            <fa-icon icon="trash"></fa-icon>
+                        </button>
+                    </div>
+                </div>
+            </mat-tree-node>
+
+            <!-- This is the tree node template for expandable nodes -->
+            <mat-tree-node *matTreeNodeDef="let node;when: hasChild" matTreeNodePadding
+                           style="width: 100%; text-align: left">
+
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <button class="btn" type="button" matTreeNodeToggle
+                                [attr.aria-label]="'toggle ' + node.name">
+                            <fa-icon [icon]="treeControl.isExpanded(node) ? 'chevron-down' : 'chevron-right'"></fa-icon>
+                        </button>
+                    </div>
+                    <button type="button" (click)="makeActive(node)"
+                            [ngClass]="{
+                            'btn':true,
+                            'parent-selected':categorySelectedByLevel.includes(node),
+                            'item-selected':idCategoryModelActive_ && idCategoryModelActive_===node.uid,
+                            'item-unselected':!idCategoryModelActive_ || idCategoryModelActive_!==node.uid}"
+                    >{{node.name + ' (' + node['count'] + ')'}}</button>
+                    <div *ngIf="creation" class="input-group-append">
+                        <button class="btn" type="button" (click)="addNewItem(node)">
+                            <fa-icon icon="plus"></fa-icon>
+                        </button>
+                        <button class="btn" type="button" (click)="deleteItem(node)">
+                            <fa-icon icon="trash"></fa-icon>
+                        </button>
+                    </div>
+                </div>
+            </mat-tree-node>
+
+            <!-- This is the tree node template for new nodes -->
+            <mat-tree-node *matTreeNodeDef="let node;when: isNewNode" matTreeNodePadding
+                           style="width: 100%; text-align: left">
+                <form (ngSubmit)="saveItem(node, itemValue)">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <button class="btn" type="button" disabled></button>
+                        </div>
+                        <input matInput #itemValue placeholder="Ex. Lettuce">
+                        <div *ngIf="creation" class="input-group-append">
+                            <button class="btn" type="submit">
+                                <fa-icon icon="save"></fa-icon>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </mat-tree-node>
+
+        </mat-tree>
+    </div>
+</div>
