@@ -1,0 +1,40 @@
+<div class="row justify-content-center">
+    <div class="col-8">
+        <div *ngIf="model">
+            <h2><span jhiTranslate="ecommerceApp.model.detail.title">Model</span> {{ model.id }}</h2>
+
+            <hr>
+
+            <jhi-alert-error></jhi-alert-error>
+
+            <dl class="row-md jh-entity-details">
+                <dt><span jhiTranslate="ecommerceApp.model.name">Name</span></dt>
+                <dd>
+                    <span>{{ model.name }}</span>
+                </dd>
+                <dt><span jhiTranslate="ecommerceApp.model.count">Count</span></dt>
+                <dd>
+                    <span>{{ model.count }}</span>
+                </dd>
+                <dt><span jhiTranslate="ecommerceApp.model.article">Article</span></dt>
+                <dd>
+                    <div *ngIf="model.article">
+                        <a [routerLink]="['/article', model.article?.id, 'view']">{{ model.article?.id }}</a>
+                    </div>
+                </dd>
+            </dl>
+
+            <button type="submit"
+                    (click)="previousState()"
+                    class="btn btn-info">
+                <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Back</span>
+            </button>
+
+            <button type="button"
+                    [routerLink]="['/model', model.id, 'edit']"
+                    class="btn btn-primary">
+                <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit">Edit</span>
+            </button>
+        </div>
+    </div>
+</div>

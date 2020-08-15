@@ -1,0 +1,42 @@
+<div class="row justify-content-center">
+    <div class="col-8">
+        <div *ngIf="attributArticle">
+            <h2><span jhiTranslate="ecommerceApp.attributArticle.detail.title">Attribut Article</span> {{ attributArticle.id }}</h2>
+
+            <hr>
+
+            <jhi-alert-error></jhi-alert-error>
+
+            <dl class="row-md jh-entity-details">
+                <dt><span jhiTranslate="ecommerceApp.attributArticle.value">Value</span></dt>
+                <dd>
+                    <span>{{ attributArticle.value }}</span>
+                </dd>
+                <dt><span jhiTranslate="ecommerceApp.attributArticle.attribut">Attribut</span></dt>
+                <dd>
+                    <div *ngIf="attributArticle.attribut">
+                        <a [routerLink]="['/attribut-value', attributArticle.attribut?.id, 'view']">{{ attributArticle.attribut?.id }}</a>
+                    </div>
+                </dd>
+                <dt><span jhiTranslate="ecommerceApp.attributArticle.article">Article</span></dt>
+                <dd>
+                    <div *ngIf="attributArticle.article">
+                        <a [routerLink]="['/article', attributArticle.article?.id, 'view']">{{ attributArticle.article?.id }}</a>
+                    </div>
+                </dd>
+            </dl>
+
+            <button type="submit"
+                    (click)="previousState()"
+                    class="btn btn-info">
+                <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Back</span>
+            </button>
+
+            <button type="button"
+                    [routerLink]="['/attribut-article', attributArticle.id, 'edit']"
+                    class="btn btn-primary">
+                <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit">Edit</span>
+            </button>
+        </div>
+    </div>
+</div>
