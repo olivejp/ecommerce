@@ -50,24 +50,6 @@ public class CacheConfiguration {
             createCache(cm, nc.oliweb.domain.User.class.getName() + ".authorities");
             createCache(cm, nc.oliweb.domain.PersistentToken.class.getName());
             createCache(cm, nc.oliweb.domain.User.class.getName() + ".persistentTokens");
-            createCache(cm, nc.oliweb.domain.Category.class.getName());
-            createCache(cm, nc.oliweb.domain.Category.class.getName() + ".articles");
-            createCache(cm, nc.oliweb.domain.Category.class.getName() + ".attributs");
-            createCache(cm, nc.oliweb.domain.Attribut.class.getName());
-            createCache(cm, nc.oliweb.domain.Attribut.class.getName() + ".values");
-            createCache(cm, nc.oliweb.domain.AttributValue.class.getName());
-            createCache(cm, nc.oliweb.domain.AttributArticle.class.getName());
-            createCache(cm, nc.oliweb.domain.Article.class.getName());
-            createCache(cm, nc.oliweb.domain.Article.class.getName() + ".models");
-            createCache(cm, nc.oliweb.domain.Article.class.getName() + ".attributs");
-            createCache(cm, nc.oliweb.domain.Photo.class.getName());
-            createCache(cm, nc.oliweb.domain.Model.class.getName());
-            createCache(cm, nc.oliweb.domain.Model.class.getName() + ".photoUrls");
-            createCache(cm, nc.oliweb.domain.Client.class.getName());
-            createCache(cm, nc.oliweb.domain.Client.class.getName() + ".commandes");
-            createCache(cm, nc.oliweb.domain.Commande.class.getName());
-            createCache(cm, nc.oliweb.domain.Commande.class.getName() + ".lignes");
-            createCache(cm, nc.oliweb.domain.LigneCommande.class.getName());
             // jhipster-needle-ehcache-add-entry
         };
     }

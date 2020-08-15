@@ -7,16 +7,6 @@
       "jhipster-needle-menu-add-element": "JHipster will add additional menu entries here (do not translate!)",
       "entities": {
         "main": "Entities",
-        "category": "Category",
-        "attribut": "Attribut",
-        "attributValue": "Attribut Value",
-        "attributArticle": "Attribut Article",
-        "article": "Article",
-        "photo": "Photo",
-        "model": "Model",
-        "client": "Client",
-        "commande": "Commande",
-        "ligneCommande": "Ligne Commande",
         "jhipster-needle-menu-add-entry": "JHipster will add additional entities here (do not translate!)"
       },
       "account": {

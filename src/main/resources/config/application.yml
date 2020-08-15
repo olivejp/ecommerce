@@ -165,8 +165,3 @@ jhipster:
 # ===================================================================
 
 # application:
-firebase:
-  csp-frame-src: https://venteenligne-87d39.firebaseapp.com.authentication.jwt https://venteenligne-87d39.firebaseapp.com
-  csp-connect-src: https://firestore.googleapis.com https://www.googleapis.com https://www.google-analytics.com https://firebaseinstallations.googleapis.com
-  csp-image-src: https://www.google.com https://lh3.googleusercontent.com
-  csp-script-src: https://apis.google.com http://www.googletagmanager.com https://www.googletagmanager.com https://www.gstatic.com  https://storage.googleapis.com

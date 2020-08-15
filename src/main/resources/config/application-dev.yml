@@ -42,15 +42,17 @@ spring:
       indent-output: true
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
-    url: jdbc:postgresql://localhost:5432/ecommerce
+    url: jdbc:h2:file:./build/h2db/db/ecommerce;DB_CLOSE_DELAY=-1
     username: ecommerce
     password:
     hikari:
       poolName: Hikari
       auto-commit: false
+  h2:
+    console:
+      enabled: false
   jpa:
-    database-platform: io.github.jhipster.domain.util.FixedPostgreSQL10Dialect
-    show-sql: false
+    show-sql: true
   data:
     elasticsearch:
       properties:
