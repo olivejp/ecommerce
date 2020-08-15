@@ -1,0 +1,73 @@
+entity Category {
+    name String required,
+    transiant Boolean
+}
+
+entity Attribut{
+	name String
+}
+
+entity AttributValue {
+	value String
+}
+
+entity AttributArticle {
+	value String
+}
+
+entity Article {
+	name String required,
+    description String,
+    available Boolean,
+    price Float
+}
+
+entity Photo {
+	name String required,
+    url String
+}
+
+entity Model {
+	name String required,
+    count Long
+}
+
+entity Client {
+	firstName String,
+	lastName String,
+	email String,
+	phoneNumber String,
+	photoUrl String
+}
+
+entity Commande {
+	date Instant,
+    datePayment Instant
+}
+
+entity LigneCommande {
+	total Float
+    number Integer
+}
+
+relationship OneToOne {
+	Category{categoryParent} to Category,
+    LigneCommande{model} to Model,
+    AttributArticle{attribut} to AttributValue
+}
+
+relationship OneToMany {
+	Category to Article{category},
+    Category to Attribut{category},
+    Article{models} to Model,
+    Model{photoUrl} to Photo,
+    Attribut{values} to AttributValue,
+    Article{attribut} to AttributArticle,
+    Commande{lignes} to LigneCommande,
+    Client{commandes} to Commande
+}
+
+paginate Article with infinite-scroll
+service * with serviceClass
+service * with serviceImpl
+dto * with mapstruct
