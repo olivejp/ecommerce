@@ -2,7 +2,7 @@ import { Component, OnInit, RendererFactory2, Renderer2 } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { Router, ActivatedRouteSnapshot, NavigationEnd, NavigationError } from '@angular/router';
 import { TranslateService, LangChangeEvent } from '@ngx-translate/core';
-
+import * as firebase from "firebase";
 import { AccountService } from 'app/core/auth/account.service';
 
 @Component({
@@ -23,6 +23,21 @@ export class MainComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    // Your web app's Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyA7sMEXJF3UGFAEuVwFXUxetC21e7tsp8E",
+      authDomain: "venteenligne-87d39.firebaseapp.com",
+      databaseURL: "https://venteenligne-87d39.firebaseio.com",
+      projectId: "venteenligne-87d39",
+      storageBucket: "venteenligne-87d39.appspot.com",
+      messagingSenderId: "769660675898",
+      appId: "1:769660675898:web:f4a81defe045fb82cd9203",
+      measurementId: "G-VTB6NVN0R8"
+    };
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    firebase.analytics();
+
     // try to log in automatically
     this.accountService.identity().subscribe();
 
