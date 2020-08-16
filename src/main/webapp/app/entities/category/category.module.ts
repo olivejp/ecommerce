@@ -14,10 +14,11 @@ import {MatFormFieldModule} from "@angular/material/form-field";
 import {DragDropModule} from "@angular/cdk/drag-drop";
 import {MatIconModule} from '@angular/material/icon';
 import {MatAutocompleteModule} from '@angular/material/autocomplete';
-import {MatOptionModule } from '@angular/material/core';
+import {MatOptionModule} from '@angular/material/core';
+import {EcommerceAttributCategoryModule} from "app/entities/attribut-category/attribut-category.module";
 
 @NgModule({
-  imports: [EcommerceSharedModule, RouterModule.forChild(categoryRoute), MatOptionModule,MatTreeModule, MatButtonModule, MatIconModule, MatFormFieldModule, DragDropModule, MatInputModule, MatAutocompleteModule],
+  imports: [EcommerceAttributCategoryModule, EcommerceSharedModule, RouterModule.forChild(categoryRoute), MatOptionModule, MatTreeModule, MatButtonModule, MatIconModule, MatFormFieldModule, DragDropModule, MatInputModule, MatAutocompleteModule],
   declarations: [CategoryComponent, CategoryDetailComponent, CategoryUpdateComponent, CategoryDeleteDialogComponent, CategoryDropdownComponent],
   entryComponents: [CategoryDeleteDialogComponent],
 })
