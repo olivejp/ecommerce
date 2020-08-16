@@ -6,6 +6,8 @@ import nc.oliweb.repository.ArticleRepository;
 import nc.oliweb.repository.search.ArticleSearchRepository;
 import nc.oliweb.service.dto.ArticleDTO;
 import nc.oliweb.service.mapper.ArticleMapper;
+import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -99,7 +101,7 @@ public class ArticleServiceImpl implements ArticleService {
     /**
      * Search for the article corresponding to the query.
      *
-     * @param query the query of the search.
+     * @param query    the query of the search.
      * @param pageable the pagination information.
      * @return the list of entities.
      */
@@ -107,7 +109,28 @@ public class ArticleServiceImpl implements ArticleService {
     @Transactional(readOnly = true)
     public Page<ArticleDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of Articles for query {}", query);
-        return articleSearchRepository.search(queryStringQuery(query), pageable)
+
+        BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
+
+        try {
+            Integer queryInteger = Integer.parseInt(query);
+            boolQueryBuilder.should(termQuery("price", queryInteger));
+        } catch (NumberFormatException e) {
+            log.warn("Query is not an integer. Search for text fields only.");
+        }
+
+        boolQueryBuilder
+            .should(wildcardQuery("name", "*" + query + "*"))
+            .should(wildcardQuery("description", "*" + query + "*"));
+
+        return articleSearchRepository.search(boolQueryBuilder, pageable)
             .map(articleMapper::toDto);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public void reindex() {
+        log.debug("Request to reindex Articles");
+        articleRepository.findAll().forEach(articleSearchRepository::save);
     }
 }

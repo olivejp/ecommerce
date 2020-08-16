@@ -138,4 +138,9 @@ export class ArticleComponent implements OnInit, OnDestroy {
       }
     }
   }
+
+  reindex(): void {
+    this.articleService.reindex()
+      .subscribe(() => console.log('Reindexed'));
+  }
 }

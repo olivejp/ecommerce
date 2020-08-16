@@ -1,5 +1,6 @@
 package nc.oliweb.web.rest;
 
+import nc.oliweb.security.AuthoritiesConstants;
 import nc.oliweb.service.ArticleService;
 import nc.oliweb.web.rest.errors.BadRequestAlertException;
 import nc.oliweb.service.dto.ArticleDTO;
@@ -14,6 +15,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -131,7 +133,7 @@ public class ArticleResource {
      * {@code SEARCH  /_search/articles?query=:query} : search for the article corresponding
      * to the query.
      *
-     * @param query the query of the article search.
+     * @param query    the query of the article search.
      * @param pageable the pagination information.
      * @return the result of the search.
      */
@@ -141,5 +143,18 @@ public class ArticleResource {
         Page<ArticleDTO> page = articleService.search(query, pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
-        }
+    }
+
+    /**
+     * {@code SEARCH  /_search/articles/reindex} : reindex all the categories in ES instance
+     *
+     * @return void
+     */
+    @PostMapping("/_search/articles/reindex")
+    @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
+    public ResponseEntity<Void> reindex() {
+        log.debug("REST request to reindex Articles");
+        articleService.reindex();
+        return ResponseEntity.noContent().headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, "reindex")).build();
+    }
 }

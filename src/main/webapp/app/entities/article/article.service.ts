@@ -41,4 +41,8 @@ export class ArticleService {
     const options = createRequestOption(req);
     return this.http.get<IArticle[]>(this.resourceSearchUrl, { params: options, observe: 'response' });
   }
+
+  reindex(): Observable<any> {
+    return this.http.post(`${this.resourceSearchUrl}/reindex`, {observe: 'response'});
+  }
 }
