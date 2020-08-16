@@ -71,6 +71,19 @@ public class AttributServiceImpl implements AttributService {
             .collect(Collectors.toCollection(LinkedList::new));
     }
 
+    /**
+     * Get all the attributs for specified category.
+     *
+     * @return the list of entities.
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public List<AttributDTO> findAllByCategoryId(Long id) {
+        log.debug("Request to get all Attributs for category : {}", id);
+        return attributRepository.findAllByCategoryId(id).stream()
+            .map(attributMapper::toDto)
+            .collect(Collectors.toCollection(LinkedList::new));
+    }
 
     /**
      * Get one attribut by id.
@@ -111,6 +124,6 @@ public class AttributServiceImpl implements AttributService {
         return StreamSupport
             .stream(attributSearchRepository.search(queryStringQuery(query)).spliterator(), false)
             .map(attributMapper::toDto)
-        .collect(Collectors.toList());
+            .collect(Collectors.toList());
     }
 }

@@ -25,6 +25,12 @@ public interface AttributService {
      */
     List<AttributDTO> findAll();
 
+    /**
+     * Get all the attributs for specified category.
+     *
+     * @return the list of entities.
+     */
+    List<AttributDTO> findAllByCategoryId(Long idCategory);
 
     /**
      * Get the "id" attribut.
@@ -45,7 +51,7 @@ public interface AttributService {
      * Search for the attribut corresponding to the query.
      *
      * @param query the query of the search.
-     * 
+     *
      * @return the list of entities.
      */
     List<AttributDTO> search(String query);

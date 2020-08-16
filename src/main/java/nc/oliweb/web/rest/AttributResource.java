@@ -105,6 +105,18 @@ public class AttributResource {
     }
 
     /**
+     * {@code GET  /attributs/category/:id} : get the attributs for category "id".
+     *
+     * @param id the id of the category to retrieve.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the attributDTOs.
+     */
+    @GetMapping("/attributs/category/{id}")
+    public List<AttributDTO> getAttributByCategory(@PathVariable Long id) {
+        log.debug("REST request to get Attribut for category : {}", id);
+        return attributService.findAllByCategoryId(id);
+    }
+
+    /**
      * {@code DELETE  /attributs/:id} : delete the "id" attribut.
      *
      * @param id the id of the attributDTO to delete.
