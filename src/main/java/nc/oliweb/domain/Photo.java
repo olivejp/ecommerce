@@ -7,6 +7,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import javax.persistence.*;
 import javax.validation.constraints.*;
 
+import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.FieldType;
 import java.io.Serializable;
 
@@ -16,7 +17,7 @@ import java.io.Serializable;
 @Entity
 @Table(name = "photo")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-@org.springframework.data.elasticsearch.annotations.Document(indexName = "photo")
+@Document(indexName = "photo")
 public class Photo implements Serializable {
 
     private static final long serialVersionUID = 1L;
