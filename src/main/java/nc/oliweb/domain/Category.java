@@ -2,11 +2,10 @@ package nc.oliweb.domain;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.springframework.data.elasticsearch.annotations.Document;
 
 import javax.persistence.*;
-import javax.validation.constraints.*;
-
-import org.springframework.data.elasticsearch.annotations.FieldType;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
@@ -17,7 +16,7 @@ import java.util.Set;
 @Entity
 @Table(name = "category")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-@org.springframework.data.elasticsearch.annotations.Document(indexName = "category")
+@Document(indexName = "category")
 public class Category implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -34,7 +33,7 @@ public class Category implements Serializable {
     @Column(name = "transiant")
     private Boolean transiant;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(unique = true)
     private Category categoryParent;
 
