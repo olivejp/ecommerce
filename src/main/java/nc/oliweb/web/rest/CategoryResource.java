@@ -130,7 +130,7 @@ public class CategoryResource {
     }
 
     /**
-     * {@code SEARCH  /_search/reindex} : reindex all the categories in ES instance
+     * {@code SEARCH  /_search/categories/reindex} : reindex all the categories in ES instance
      *
      * @return void
      */
