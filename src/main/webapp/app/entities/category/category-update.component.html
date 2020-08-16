@@ -1,41 +1,46 @@
 <div class="row justify-content-center">
-    <div class="col-8">
+    <div class="col-12">
         <form name="editForm" role="form" novalidate (ngSubmit)="save()" [formGroup]="editForm">
-            <h2 id="jhi-category-heading" jhiTranslate="ecommerceApp.category.home.createOrEditLabel">Create or edit a Category</h2>
+            <h2 id="jhi-category-heading" jhiTranslate="ecommerceApp.category.home.createOrEditLabel">Create or edit a
+                Category</h2>
 
             <div>
                 <jhi-alert-error></jhi-alert-error>
 
                 <div class="form-group" [hidden]="!editForm.get('id')!.value">
                     <label for="id" jhiTranslate="global.field.id">ID</label>
-                    <input type="text" class="form-control" id="id" name="id" formControlName="id" readonly />
+                    <input type="text" class="form-control" id="id" name="id" formControlName="id" readonly/>
                 </div>
 
                 <div class="form-group">
-                    <label class="form-control-label" jhiTranslate="ecommerceApp.category.name" for="field_name">Name</label>
+                    <label class="form-control-label" jhiTranslate="ecommerceApp.category.name"
+                           for="field_name">Name</label>
                     <input type="text" class="form-control" name="name" id="field_name"
                            formControlName="name"/>
-                    <div *ngIf="editForm.get('name')!.invalid && (editForm.get('name')!.dirty || editForm.get('name')!.touched)">
+                    <div
+                        *ngIf="editForm.get('name')!.invalid && (editForm.get('name')!.dirty || editForm.get('name')!.touched)">
                         <small class="form-text text-danger"
                                *ngIf="editForm.get('name')?.errors?.required" jhiTranslate="entity.validation.required">
-                        This field is required.
+                            This field is required.
                         </small>
                     </div>
                 </div>
 
                 <div class="form-group">
-                    <label class="form-control-label" jhiTranslate="ecommerceApp.category.transiant" for="field_transiant">Transiant</label>
+                    <label class="form-control-label" jhiTranslate="ecommerceApp.category.transiant"
+                           for="field_transiant">Transiant</label>
                     <input type="checkbox" class="form-control" name="transiant" id="field_transiant"
                            formControlName="transiant"/>
                 </div>
 
-                <div class="form-group">
-                    <label class="form-control-label" jhiTranslate="ecommerceApp.category.categoryParent" for="field_categoryParent">Category Parent</label>
-                    <select class="form-control" id="field_categoryParent" name="categoryParent" formControlName="categoryParentId">
-                        <option [ngValue]="null"></option>
-                        <option [ngValue]="categoryOption.id" *ngFor="let categoryOption of categoryparents; trackBy: trackById">{{ categoryOption.id }}</option>
-                    </select>
-                </div>
+                                <div class="form-group">
+                                    <label class="form-control-label" jhiTranslate="ecommerceApp.category.categoryParent" for="field_categoryParent">Category Parent</label>
+                                    <select class="form-control" id="field_categoryParent" name="categoryParent" formControlName="categoryParentId">
+                                        <option [ngValue]="null"></option>
+                                        <option [ngValue]="categoryOption.id" *ngFor="let categoryOption of categoryparents; trackBy: trackById">{{ categoryOption.name }}</option>
+                                    </select>
+                                </div>
+
             </div>
 
             <div>
@@ -43,7 +48,8 @@
                     <fa-icon icon="ban"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
                 </button>
 
-                <button type="submit" id="save-entity" [disabled]="editForm.invalid || isSaving" class="btn btn-primary">
+                <button type="submit" id="save-entity" [disabled]="editForm.invalid || isSaving"
+                        class="btn btn-primary">
                     <fa-icon icon="save"></fa-icon>&nbsp;<span jhiTranslate="entity.action.save">Save</span>
                 </button>
             </div>

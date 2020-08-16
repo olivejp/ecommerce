@@ -1,5 +1,5 @@
 import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
-import {CategoryService} from 'app/entities/category/category.service';
+import {CategoryService, TypeCategory} from 'app/entities/category/category.service';
 import {from, Observable, of, Subscription} from 'rxjs';
 import {concatMap, delay, distinct, map, tap, toArray} from 'rxjs/operators';
 import {Category, ICategory} from "app/shared/model/category.model";
@@ -32,7 +32,7 @@ export class CategoryDropdownComponent implements OnInit, OnDestroy {
   @Input()
   set allCategories(emptyCategory: boolean) {
     this.allCategories_ = emptyCategory;
-    this.findAllCategories();
+    this.search();
   }
 
   @Input()
@@ -42,19 +42,20 @@ export class CategoryDropdownComponent implements OnInit, OnDestroy {
   }
 
   @Output()
-  changeCategory = new EventEmitter<Category | CategoryCompleteModel | undefined>();
+  changeCategory = new EventEmitter<ICategory | CategoryCompleteModel | null>();
 
   @Output()
   errorEmitter = new EventEmitter<string>();
 
   query = '';
   allCategories_ = false;
-  categoryActive_: Category | undefined;
+  categoryActive_: ICategory | undefined;
   idCategoryModelActive_: number | null = null;
   categories: ICategory[] | null = [];
   categorySelectedByLevel: CategoryCompleteModel[] = [];
   subscription: Subscription | null = null;
   categoryUpdatedSubscription: Subscription | null = null;
+  subscriptionListen: Subscription | null = null;
 
   private _transformer = (node: CategoryCompleteModel) => {
     return node;
@@ -84,11 +85,18 @@ export class CategoryDropdownComponent implements OnInit, OnDestroy {
 
   hasChild = (_: number, node: CategoryCompleteModel) => node.children && node.children.length > 0;
 
-  isNewNode = (_: number, node: CategoryCompleteModel) => node.id === -1;
+  isNewNode = (_: number, node: CategoryCompleteModel) => node.id === undefined;
 
   ngOnInit(): void {
 
-    this.findAllCategories();
+    this.search();
+
+    this.subscriptionListen = this.categoryService.listen().subscribe(values => {
+      const type: TypeCategory = values[0];
+      if (type === TypeCategory.UPDATED) {
+        this.search();
+      }
+    });
 
     if (this.categoryUpdatedSubscription) {
       this.categoryUpdatedSubscription.unsubscribe();
@@ -103,10 +111,14 @@ export class CategoryDropdownComponent implements OnInit, OnDestroy {
     if (this.categoryUpdatedSubscription) {
       this.categoryUpdatedSubscription.unsubscribe();
     }
+
+    if (this.subscriptionListen) {
+      this.subscriptionListen.unsubscribe();
+    }
   }
 
   makeActive(node: any): void {
-    if (!node || !node.uid || node.uid === 'undefined') {
+    if (!node || !node.id || node.id === 'undefined') {
       this.idCategoryModelActive_ = null;
       this.categoryActive_ = undefined;
       this.categorySelectedByLevel = [];
@@ -165,29 +177,6 @@ export class CategoryDropdownComponent implements OnInit, OnDestroy {
     return undefined;
   }
 
-  private findAllCategories(): void {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-    }
-
-    this.subscription = this.categoryService.query()
-      .pipe(
-        map(a => a.body),
-        tap(a => (this.categories = a)),
-        concatMap(values => this.orderCategoryTree(values))
-      )
-      .subscribe(
-        catComplete => {
-          this.dataSource.data = catComplete;
-          this.treeControl.expandAll();
-          if (this.idCategoryModelActive_) {
-            this.selectDescendants(this.idCategoryModelActive_);
-          }
-        },
-        error => this.errorEmitter.emit('categoryUid-dropdown.component error : ' + error)
-      );
-  }
-
   private orderCategoryTree(categories: ICategory[] | null): Observable<CategoryCompleteModel[]> {
     if (!categories) return of([]);
 
@@ -222,7 +211,7 @@ export class CategoryDropdownComponent implements OnInit, OnDestroy {
   }
 
   addNewItem(node: CategoryCompleteModel): void {
-    node.children.push(new CategoryCompleteModel(new Category(-1, '', false, node.categoryParentId, [], node.attributs), [], node.level + 1));
+    node.children.push(new CategoryCompleteModel(new Category(undefined, '', false, node.id, [], []), [], node.level + 1));
     const a = this.dataSource.data;
     this.dataSource.data = a;
     this.treeControl.expand(node);
@@ -240,7 +229,10 @@ export class CategoryDropdownComponent implements OnInit, OnDestroy {
     node.name = itemValue.value;
     this.categoryService.create(node)
       .subscribe(
-        () => this.findAllCategories(),
+        entityResponse => {
+          this.search();
+          this.categoryService.emit(TypeCategory.CREATED, entityResponse.body);
+        },
         error => this.errorEmitter.emit(error)
       );
   }
@@ -250,9 +242,10 @@ export class CategoryDropdownComponent implements OnInit, OnDestroy {
       .then(isConfirmed => {
         if (isConfirmed) {
           this.categoryService.delete(node.id)
-            .subscribe(() => this.findAllCategories(),
-              error => this.errorEmitter.emit(error),
-              () => this.findAllCategories());
+            .subscribe(
+              () => this.search(),
+              error => this.errorEmitter.emit(error)
+            );
         }
       })
       .catch(error => this.errorEmitter.emit(error));
@@ -260,38 +253,38 @@ export class CategoryDropdownComponent implements OnInit, OnDestroy {
 
   addNewCategoryToRoot(): void {
     const a = this.dataSource.data;
-    a.push(new CategoryCompleteModel(new Category(-1, '', false, undefined, [], []), [], 0));
+    a.push(new CategoryCompleteModel(new Category(undefined, '', false, undefined, [], []), [], 0));
     this.dataSource.data = a;
   }
 
   search(): void {
-    const inputValue: string = this.query;
-    if (inputValue && inputValue.length > 0) {
-      if (this.subscription) {
-        this.subscription.unsubscribe();
-      }
-      this.subscription = of(inputValue)
-        .pipe(
-          delay(300),
-          distinct(),
-          concatMap(searchString => this.categoryService.search({query: searchString})),
-          map(a => a.body),
-          tap(a => (this.categories = a)),
-          concatMap(values => this.orderCategoryTree(values))
-        )
-        .subscribe(
-          catComplete => {
-            this.dataSource.data = catComplete;
-            this.treeControl.expandAll();
-            if (this.idCategoryModelActive_) {
-              this.selectDescendants(this.idCategoryModelActive_);
-            }
-          },
-          error => this.errorEmitter.emit('categoryUid-dropdown.component error : ' + error)
-        );
-    } else {
-      this.findAllCategories();
+    const inputValue: string = this.query || '';
+    if (this.subscription) {
+      this.subscription.unsubscribe();
     }
+    this.subscription = of(inputValue)
+      .pipe(
+        delay(300),
+        distinct(),
+        concatMap(searchString => this.searchText(searchString))
+      ).subscribe(catComplete => {
+          this.dataSource.data = catComplete;
+          this.treeControl.expandAll();
+          if (this.idCategoryModelActive_) {
+            this.selectDescendants(this.idCategoryModelActive_);
+          }
+        },
+        error => this.errorEmitter.emit('categoryUid-dropdown.component error : ' + error)
+      );
+  }
+
+  private searchText(searchString: string): Observable<CategoryCompleteModel[]> {
+    return this.categoryService.search({query: searchString})
+      .pipe(
+        map(a => a.body),
+        tap(a => (this.categories = a)),
+        concatMap(values => this.orderCategoryTree(values))
+      );
   }
 
   cleanSearch(): void {

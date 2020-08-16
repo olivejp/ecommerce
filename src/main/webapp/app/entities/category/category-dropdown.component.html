@@ -34,7 +34,7 @@
     <div class="row" style="max-height: 500px; overflow-y: scroll;">
         <mat-tree style="width: 100%" [dataSource]="dataSource" [treeControl]="treeControl">
             <!-- This is the tree node template for leaf nodes -->
-            <mat-tree-node *matTreeNodeDef="let node" matTreeNodePadding>
+            <mat-tree-node  *matTreeNodeDef="let node" matTreeNodePadding>
                 <!-- use a disabled button to provide padding for tree leaf -->
                 <div class="input-group">
                     <div class="input-group-prepend">
@@ -44,9 +44,9 @@
                             [ngClass]="{
                             'btn':true,
                             'parent-selected':categorySelectedByLevel.includes(node),
-                            'item-selected':idCategoryModelActive_ && idCategoryModelActive_===node.uid,
-                            'item-unselected':!idCategoryModelActive_ || idCategoryModelActive_!==node.uid}"
-                    >{{node.name + ' (' + node['count'] + ')'}}</button>
+                            'item-selected':idCategoryModelActive_ && idCategoryModelActive_===node.id,
+                            'item-unselected':!idCategoryModelActive_ || idCategoryModelActive_!==node.id}"
+                    >{{node.name}}</button>
                     <div *ngIf="creation" class="input-group-append">
                         <button class="btn" type="button" (click)="addNewItem(node)">
                             <fa-icon icon="plus"></fa-icon>
@@ -59,7 +59,7 @@
             </mat-tree-node>
 
             <!-- This is the tree node template for expandable nodes -->
-            <mat-tree-node *matTreeNodeDef="let node;when: hasChild" matTreeNodePadding
+            <mat-tree-node  *matTreeNodeDef="let node;when: hasChild" matTreeNodePadding
                            style="width: 100%; text-align: left">
 
                 <div class="input-group">
@@ -73,9 +73,9 @@
                             [ngClass]="{
                             'btn':true,
                             'parent-selected':categorySelectedByLevel.includes(node),
-                            'item-selected':idCategoryModelActive_ && idCategoryModelActive_===node.uid,
-                            'item-unselected':!idCategoryModelActive_ || idCategoryModelActive_!==node.uid}"
-                    >{{node.name + ' (' + node['count'] + ')'}}</button>
+                            'item-selected':idCategoryModelActive_ && idCategoryModelActive_===node.id,
+                            'item-unselected':!idCategoryModelActive_ || idCategoryModelActive_!==node.id}"
+                    >{{node.name}}</button>
                     <div *ngIf="creation" class="input-group-append">
                         <button class="btn" type="button" (click)="addNewItem(node)">
                             <fa-icon icon="plus"></fa-icon>
@@ -88,7 +88,7 @@
             </mat-tree-node>
 
             <!-- This is the tree node template for new nodes -->
-            <mat-tree-node *matTreeNodeDef="let node;when: isNewNode" matTreeNodePadding
+            <mat-tree-node  *matTreeNodeDef="let node;when: isNewNode" matTreeNodePadding
                            style="width: 100%; text-align: left">
                 <form (ngSubmit)="saveItem(node, itemValue)">
                     <div class="input-group">

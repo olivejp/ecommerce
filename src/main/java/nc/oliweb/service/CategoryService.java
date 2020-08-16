@@ -45,8 +45,14 @@ public interface CategoryService {
      * Search for the category corresponding to the query.
      *
      * @param query the query of the search.
-     * 
      * @return the list of entities.
      */
     List<CategoryDTO> search(String query);
+
+    /**
+     * Reindex all categories into ES instance
+     *
+     * @return void
+     */
+    void reindex();
 }

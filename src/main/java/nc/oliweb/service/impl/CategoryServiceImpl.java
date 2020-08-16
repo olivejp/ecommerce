@@ -1,14 +1,15 @@
 package nc.oliweb.service.impl;
 
-import nc.oliweb.service.CategoryService;
 import nc.oliweb.domain.Category;
 import nc.oliweb.repository.CategoryRepository;
 import nc.oliweb.repository.search.CategorySearchRepository;
+import nc.oliweb.service.CategoryService;
 import nc.oliweb.service.dto.CategoryDTO;
 import nc.oliweb.service.mapper.CategoryMapper;
+import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,7 +19,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-import static org.elasticsearch.index.query.QueryBuilders.*;
+import static org.elasticsearch.index.query.QueryBuilders.wildcardQuery;
 
 /**
  * Service Implementation for managing {@link Category}.
@@ -66,7 +67,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Transactional(readOnly = true)
     public List<CategoryDTO> findAll() {
         log.debug("Request to get all Categories");
-        return categoryRepository.findAll().stream()
+        return categoryRepository.findAllOrderById().stream()
             .map(categoryMapper::toDto)
             .collect(Collectors.toCollection(LinkedList::new));
     }
@@ -108,9 +109,20 @@ public class CategoryServiceImpl implements CategoryService {
     @Transactional(readOnly = true)
     public List<CategoryDTO> search(String query) {
         log.debug("Request to search Categories for query {}", query);
+
+        BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
+        boolQueryBuilder.must(wildcardQuery("name", "*" + query + "*"));
+
         return StreamSupport
-            .stream(categorySearchRepository.search(queryStringQuery(query)).spliterator(), false)
+            .stream(categorySearchRepository.search(boolQueryBuilder).spliterator(), false)
             .map(categoryMapper::toDto)
-        .collect(Collectors.toList());
+            .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public void reindex() {
+        log.debug("Request to reindex Categories");
+        categoryRepository.findAll().forEach(categorySearchRepository::save);
     }
 }

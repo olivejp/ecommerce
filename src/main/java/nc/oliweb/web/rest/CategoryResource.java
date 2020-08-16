@@ -1,15 +1,16 @@
 package nc.oliweb.web.rest;
 
-import nc.oliweb.service.CategoryService;
-import nc.oliweb.web.rest.errors.BadRequestAlertException;
-import nc.oliweb.service.dto.CategoryDTO;
-
 import io.github.jhipster.web.util.HeaderUtil;
 import io.github.jhipster.web.util.ResponseUtil;
+import nc.oliweb.security.AuthoritiesConstants;
+import nc.oliweb.service.CategoryService;
+import nc.oliweb.service.dto.CategoryDTO;
+import nc.oliweb.web.rest.errors.BadRequestAlertException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -17,9 +18,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.StreamSupport;
-
-import static org.elasticsearch.index.query.QueryBuilders.*;
 
 /**
  * REST controller for managing {@link nc.oliweb.domain.Category}.
@@ -129,5 +127,18 @@ public class CategoryResource {
     public List<CategoryDTO> searchCategories(@RequestParam String query) {
         log.debug("REST request to search Categories for query {}", query);
         return categoryService.search(query);
+    }
+
+    /**
+     * {@code SEARCH  /_search/reindex} : reindex all the categories in ES instance
+     *
+     * @return void
+     */
+    @PostMapping("/_search/categories/reindex")
+    @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
+    public ResponseEntity<Void> reindex() {
+        log.debug("REST request to reindex Categories");
+        categoryService.reindex();
+        return ResponseEntity.noContent().headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, "reindex")).build();
     }
 }

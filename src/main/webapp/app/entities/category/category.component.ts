@@ -1,19 +1,21 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { HttpResponse } from '@angular/common/http';
-import { ActivatedRoute } from '@angular/router';
-import { Subscription } from 'rxjs';
-import { JhiEventManager } from 'ng-jhipster';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import {Component, OnDestroy, OnInit} from '@angular/core';
+import {HttpResponse} from '@angular/common/http';
+import {ActivatedRoute} from '@angular/router';
+import {Subscription} from 'rxjs';
+import {JhiEventManager} from 'ng-jhipster';
+import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 
-import { ICategory } from 'app/shared/model/category.model';
-import { CategoryService } from './category.service';
-import { CategoryDeleteDialogComponent } from './category-delete-dialog.component';
+import {ICategory} from 'app/shared/model/category.model';
+import {CategoryService} from './category.service';
+import {CategoryDeleteDialogComponent} from './category-delete-dialog.component';
 
 @Component({
   selector: 'jhi-category',
   templateUrl: './category.component.html',
 })
 export class CategoryComponent implements OnInit, OnDestroy {
+  categoryActive_: ICategory | undefined;
+  categoryUpdated_: ICategory | undefined;
   categories?: ICategory[];
   eventSubscriber?: Subscription;
   currentSearch: string;
@@ -69,7 +71,22 @@ export class CategoryComponent implements OnInit, OnDestroy {
   }
 
   delete(category: ICategory): void {
-    const modalRef = this.modalService.open(CategoryDeleteDialogComponent, { size: 'lg', backdrop: 'static' });
+    const modalRef = this.modalService.open(CategoryDeleteDialogComponent, {size: 'lg', backdrop: 'static'});
     modalRef.componentInstance.category = category;
+  }
+
+  reindex(): void {
+    this.categoryService.reindex()
+      .subscribe(() => console.log('Reindexed'));
+  }
+
+  makeCategoryActive($event: any): void {
+    this.categoryActive_ = $event;
+  }
+
+  reloadCategories(categoryUpdated: ICategory | null): void {
+    if (categoryUpdated) {
+      this.categoryUpdated_ = categoryUpdated;
+    }
   }
 }
