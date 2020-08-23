@@ -11,6 +11,7 @@ import {CategoryService} from './category.service';
 import {CategoryComponent} from './category.component';
 import {CategoryDetailComponent} from './category-detail.component';
 import {CategoryUpdateComponent} from "app/entities/category/category-update.component";
+import {ArticleCategoryComponent} from "app/entities/category/article-category/article-category.component";
 
 @Injectable({providedIn: 'root'})
 export class CategoryResolve implements Resolve<ICategory> {
@@ -38,12 +39,24 @@ export class CategoryResolve implements Resolve<ICategory> {
 export const categoryRoute: Routes = [
   {
     path: '',
+    redirectTo: 'category'
+  },
+  {
+    path: 'category',
     component: CategoryComponent,
     data: {
       authorities: [Authority.USER],
       pageTitle: 'ecommerceApp.category.home.title',
     },
     canActivate: [UserRouteAccessService],
+    // TODO Supprimer ce routing
+    children: [
+      {
+        path: 'article',
+        component: ArticleCategoryComponent,
+        outlet: 'categoryOutlet'
+      }
+    ]
   },
   {
     path: ':categoryId/edit',

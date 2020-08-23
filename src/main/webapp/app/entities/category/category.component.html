@@ -20,7 +20,7 @@
             <jhi-category-dropdown [creation]="true"
                                    (changeCategory)="makeCategoryActive($event)"></jhi-category-dropdown>
         </div>
-        <div class="col-8">
+        <div class="col-4">
             <div *ngIf="categoryActive_">
                 <ul ngbNav #nav="ngbNav" [(activeId)]="active" class="nav-tabs">
                     <li [ngbNavItem]="1">
@@ -39,7 +39,7 @@
                         </ng-template>
                     </li>
                     <li [ngbNavItem]="3">
-                        <a ngbNavLink>Article</a>
+                        <a ngbNavLink [routerLink]="[{outlets: {'categoryOutlet': ['article']}}]">Article</a>
                         <ng-template ngbNavContent>
                             <div>
                                 <jhi-article-category [category]="categoryActive_"></jhi-article-category>
@@ -49,6 +49,9 @@
                 </ul>
                 <div [ngbNavOutlet]="nav" class="mt-2"></div>
             </div>
+        </div>
+        <div class="col-4">
+            <router-outlet name="categoryOutlet"></router-outlet>
         </div>
     </div>
 
