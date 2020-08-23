@@ -8,6 +8,7 @@ import nc.oliweb.service.dto.ArticleDTO;
 import nc.oliweb.service.mapper.ArticleMapper;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.h2.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,6 +17,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.Nullable;
 import java.util.Optional;
 
 import static org.elasticsearch.index.query.QueryBuilders.*;
@@ -101,27 +103,31 @@ public class ArticleServiceImpl implements ArticleService {
     /**
      * Search for the article corresponding to the query.
      *
-     * @param query    the query of the search.
-     * @param pageable the pagination information.
+     * @param query      the query of the search.
+     * @param idCategory could be null. If specified we search on category.id field with a must term query.
+     * @param pageable   the pagination information.
      * @return the list of entities.
      */
     @Override
     @Transactional(readOnly = true)
-    public Page<ArticleDTO> search(String query, Pageable pageable) {
+    public Page<ArticleDTO> search(String query, @Nullable Long idCategory, Pageable pageable) {
         log.debug("Request to search for a page of Articles for query {}", query);
 
         BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
 
-        try {
-            Integer queryInteger = Integer.parseInt(query);
-            boolQueryBuilder.should(termQuery("price", queryInteger));
-        } catch (NumberFormatException e) {
-            log.warn("Query is not an integer. Search for text fields only.");
+        if (StringUtils.isNumber(query)) {
+            boolQueryBuilder.should(termQuery("price", query));
+        }
+
+        if (idCategory != null) {
+            boolQueryBuilder.must(termQuery("category.id", idCategory));
         }
 
         boolQueryBuilder
-            .should(wildcardQuery("name", "*" + query + "*"))
-            .should(wildcardQuery("description", "*" + query + "*"));
+            .must(QueryBuilders.boolQuery()
+                .should(wildcardQuery("name", "*" + query + "*"))
+                .should(wildcardQuery("description", "*" + query + "*"))
+            );
 
         return articleSearchRepository.search(boolQueryBuilder, pageable)
             .map(articleMapper::toDto);

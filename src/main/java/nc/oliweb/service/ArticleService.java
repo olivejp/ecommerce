@@ -47,12 +47,12 @@ public interface ArticleService {
     /**
      * Search for the article corresponding to the query.
      *
-     * @param query the query of the search.
-     *
-     * @param pageable the pagination information.
+     * @param query      the query of the search.
+     * @param idCategory long idCategory.
+     * @param pageable   the pagination information.
      * @return the list of entities.
      */
-    Page<ArticleDTO> search(String query, Pageable pageable);
+    Page<ArticleDTO> search(String query, Long idCategory, Pageable pageable);
 
     /**
      * Reindex all articles into ES instance

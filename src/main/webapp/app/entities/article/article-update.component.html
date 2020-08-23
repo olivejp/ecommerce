@@ -45,7 +45,7 @@
                     <label class="form-control-label" jhiTranslate="ecommerceApp.article.category" for="field_category">Category</label>
                     <select class="form-control" id="field_category" name="category" formControlName="categoryId">
                         <option [ngValue]="null"></option>
-                        <option [ngValue]="categoryOption.id" *ngFor="let categoryOption of categories; trackBy: trackById">{{ categoryOption.id }}</option>
+                        <option [ngValue]="categoryOption.id" *ngFor="let categoryOption of categories; trackBy: trackById">{{ categoryOption.name }}</option>
                     </select>
                 </div>
             </div>

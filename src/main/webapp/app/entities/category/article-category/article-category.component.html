@@ -66,10 +66,6 @@
                 <th scope="col" jhiSortBy="price"><span jhiTranslate="ecommerceApp.article.price">Price</span>
                     <fa-icon icon="sort"></fa-icon>
                 </th>
-                <th scope="col" jhiSortBy="categoryId"><span
-                    jhiTranslate="ecommerceApp.article.category">Category</span>
-                    <fa-icon icon="sort"></fa-icon>
-                </th>
                 <th scope="col"></th>
             </tr>
             </thead>
@@ -81,11 +77,6 @@
                 <td>{{ article.description }}</td>
                 <td>{{ article.available }}</td>
                 <td>{{ article.price }}</td>
-                <td>
-                    <div *ngIf="article.categoryId">
-                        <a [routerLink]="['/category', article.categoryId , 'view']">{{ article.categoryId }}</a>
-                    </div>
-                </td>
                 <td class="text-right">
                     <div class="btn-group">
                         <button type="submit"

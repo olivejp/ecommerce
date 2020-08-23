@@ -133,14 +133,15 @@ public class ArticleResource {
      * {@code SEARCH  /_search/articles?query=:query} : search for the article corresponding
      * to the query.
      *
-     * @param query    the query of the article search.
-     * @param pageable the pagination information.
+     * @param query      the query of the article search.
+     * @param idCategory could be null. If specified we search on category.id field with a must term query.
+     * @param pageable   the pagination information.
      * @return the result of the search.
      */
     @GetMapping("/_search/articles")
-    public ResponseEntity<List<ArticleDTO>> searchArticles(@RequestParam String query, Pageable pageable) {
+    public ResponseEntity<List<ArticleDTO>> searchArticles(@RequestParam String query, @RequestParam(required = false) Long idCategory, Pageable pageable) {
         log.debug("REST request to search for a page of Articles for query {}", query);
-        Page<ArticleDTO> page = articleService.search(query, pageable);
+        Page<ArticleDTO> page = articleService.search(query, idCategory, pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }

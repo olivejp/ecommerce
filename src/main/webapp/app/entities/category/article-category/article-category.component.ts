@@ -18,6 +18,7 @@ import {ArticleDeleteDialogComponent} from "app/entities/article/article-delete-
 })
 export class ArticleCategoryComponent implements OnInit, OnDestroy {
   articles: IArticle[];
+  loadAllSubscription?: Subscription;
   eventSubscriber?: Subscription;
   itemsPerPage: number;
   links: any;
@@ -26,12 +27,12 @@ export class ArticleCategoryComponent implements OnInit, OnDestroy {
   ascending: boolean;
   currentSearch: string;
 
-  private category_ : ICategory | undefined;
+  private category_: ICategory | undefined;
 
   @Input()
   set category(cat: ICategory | undefined) {
     this.category_ = cat;
-    this.loadAll();
+    this.reset();
   }
 
   constructor(
@@ -55,37 +56,36 @@ export class ArticleCategoryComponent implements OnInit, OnDestroy {
         : '';
   }
 
-  loadAll(): void {
-    if (this.currentSearch) {
-      this.articleService
-        .search({
-          query: this.currentSearch,
-          page: this.page,
-          size: this.itemsPerPage,
-          sort: this.sort(),
-        })
-        .subscribe((res: HttpResponse<IArticle[]>) => this.paginateArticles(res.body, res.headers));
-      return;
+  loadAll(idCategory: number | undefined): void {
+    const searhOption = {
+      query: this.currentSearch,
+      page: this.page,
+      size: this.itemsPerPage,
+      sort: this.sort(),
+    };
+
+    if (idCategory) {
+      Object.assign(searhOption, {idCategory});
     }
 
-    this.articleService
-      .query({
-        page: this.page,
-        size: this.itemsPerPage,
-        sort: this.sort(),
-      })
+    if (this.loadAllSubscription) {
+      this.loadAllSubscription.unsubscribe();
+    }
+
+    this.loadAllSubscription = this.articleService
+      .search(searhOption)
       .subscribe((res: HttpResponse<IArticle[]>) => this.paginateArticles(res.body, res.headers));
   }
 
   reset(): void {
     this.page = 0;
     this.articles = [];
-    this.loadAll();
+    this.loadAll(this.category_?.id);
   }
 
   loadPage(page: number): void {
     this.page = page;
-    this.loadAll();
+    this.loadAll(this.category_?.id);
   }
 
   search(query: string): void {
@@ -102,17 +102,20 @@ export class ArticleCategoryComponent implements OnInit, OnDestroy {
       this.ascending = true;
     }
     this.currentSearch = query;
-    this.loadAll();
+    this.loadAll(this.category_?.id);
   }
 
   ngOnInit(): void {
-    this.loadAll();
+    this.loadAll(this.category_?.id);
     this.registerChangeInArticles();
   }
 
   ngOnDestroy(): void {
     if (this.eventSubscriber) {
       this.eventManager.destroy(this.eventSubscriber);
+    }
+    if (this.loadAllSubscription) {
+      this.loadAllSubscription.unsubscribe();
     }
   }
 
@@ -126,7 +129,7 @@ export class ArticleCategoryComponent implements OnInit, OnDestroy {
   }
 
   delete(article: IArticle): void {
-    const modalRef = this.modalService.open(ArticleDeleteDialogComponent, { size: 'lg', backdrop: 'static' });
+    const modalRef = this.modalService.open(ArticleDeleteDialogComponent, {size: 'lg', backdrop: 'static'});
     modalRef.componentInstance.article = article;
   }
 
