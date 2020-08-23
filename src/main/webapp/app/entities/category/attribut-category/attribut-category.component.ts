@@ -4,10 +4,11 @@ import {JhiEventManager} from 'ng-jhipster';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 
 import {IAttribut} from 'app/shared/model/attribut.model';
-import {AttributService} from '../attribut/attribut.service';
-import {AttributDeleteDialogComponent} from '../attribut/attribut-delete-dialog.component';
+import {AttributService} from '../../attribut/attribut.service';
+import {AttributDeleteDialogComponent} from '../../attribut/attribut-delete-dialog.component';
 import {ICategory} from "app/shared/model/category.model";
 import {map} from 'rxjs/operators';
+import { Router, ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'jhi-attribut-category',
@@ -29,6 +30,8 @@ export class AttributCategoryComponent implements OnInit, OnDestroy {
   constructor(
     protected attributService: AttributService,
     protected eventManager: JhiEventManager,
+    protected router: Router,
+    protected route: ActivatedRoute,
     protected modalService: NgbModal
   ) {
   }
@@ -59,5 +62,9 @@ export class AttributCategoryComponent implements OnInit, OnDestroy {
   delete(attribut: IAttribut): void {
     const modalRef = this.modalService.open(AttributDeleteDialogComponent, {size: 'lg', backdrop: 'static'});
     modalRef.componentInstance.attribut = attribut;
+  }
+
+  navigate(): void {
+    this.router.navigate(['attribut','new'], {relativeTo: this.route});
   }
 }

@@ -1,7 +1,7 @@
 import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {HttpResponse} from '@angular/common/http';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import {FormBuilder, Validators, FormControl} from '@angular/forms';
+import {FormBuilder, FormControl, Validators} from '@angular/forms';
 import {ActivatedRoute} from '@angular/router';
 import {Observable, Subscription} from 'rxjs';
 import {map, tap} from 'rxjs/operators';
@@ -25,6 +25,7 @@ export class CategoryUpdateComponent implements OnInit, OnDestroy {
     this.category_ = category;
     if (this.category_) {
       this.updateForm(this.category_);
+      this.findAllParents();
     }
   }
 
@@ -58,7 +59,7 @@ export class CategoryUpdateComponent implements OnInit, OnDestroy {
 
   private findAllParents(): void {
     this.categoryService
-      .query({filter: 'category-is-null'})
+      .getAvaialbleParents(this.category_?.id)
       .pipe(
         map((res: HttpResponse<ICategory[]>) => {
           return res.body || [];
@@ -84,9 +85,17 @@ export class CategoryUpdateComponent implements OnInit, OnDestroy {
     this.isSaving = true;
     const category = this.createFromForm();
     if (category.id !== undefined) {
-      this.subscribeToSaveResponse(this.categoryService.update(category).pipe(tap(a => this.categoryService.emit(TypeCategory.UPDATED, a.body))));
+      this.subscribeToSaveResponse(this.categoryService.update(category)
+        .pipe(
+          tap(a => this.categoryService.emit(TypeCategory.UPDATED, a.body)),
+          tap(() => this.findAllParents())
+        ));
     } else {
-      this.subscribeToSaveResponse(this.categoryService.create(category).pipe(tap(a => this.categoryService.emit(TypeCategory.CREATED, a.body))));
+      this.subscribeToSaveResponse(this.categoryService.create(category)
+        .pipe(
+          tap(a => this.categoryService.emit(TypeCategory.CREATED, a.body)),
+          tap(() => this.findAllParents())
+        ));
     }
   }
 

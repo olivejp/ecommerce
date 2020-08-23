@@ -68,7 +68,7 @@ public class CategoryResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PutMapping("/categories")
-    public ResponseEntity<CategoryDTO> updateCategory(@Valid @RequestBody CategoryDTO categoryDTO) throws URISyntaxException {
+    public ResponseEntity<CategoryDTO> updateCategory(@Valid @RequestBody CategoryDTO categoryDTO) {
         log.debug("REST request to update Category : {}", categoryDTO);
         if (categoryDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
@@ -88,6 +88,17 @@ public class CategoryResource {
     public List<CategoryDTO> getAllCategories() {
         log.debug("REST request to get all Categories");
         return categoryService.findAll();
+    }
+
+    /**
+     * {@code GET  /categories/:id/availableParents} : get all the categories.
+     *
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of categories in body.
+     */
+    @GetMapping("/categories/{id}/availableParents")
+    public List<CategoryDTO> getAllAvailableParentsCategories(@PathVariable Long id) {
+        log.debug("REST request to get all Categories");
+        return categoryService.getAvailableParents(id);
     }
 
     /**
@@ -127,6 +138,19 @@ public class CategoryResource {
     public List<CategoryDTO> searchCategories(@RequestParam String query) {
         log.debug("REST request to search Categories for query {}", query);
         return categoryService.search(query);
+    }
+
+    /**
+     * {@code SEARCH  /_search/categories} : search for the category corresponding
+     * to the query.
+     *
+     * @param query the query of the category search.
+     * @return the result of the search.
+     */
+    @PostMapping("/_search/categories")
+    public List<CategoryDTO> searchQueryStringCategories(@RequestBody String query) {
+        log.debug("REST request to search Categories for query {}", query);
+        return categoryService.searchQueryString(query);
     }
 
     /**

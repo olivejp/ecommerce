@@ -1,22 +1,22 @@
-import { Component, OnInit, OnDestroy, Input } from '@angular/core';
-import { HttpHeaders, HttpResponse } from '@angular/common/http';
-import { ActivatedRoute } from '@angular/router';
-import { Subscription } from 'rxjs';
-import { JhiEventManager, JhiParseLinks } from 'ng-jhipster';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import {Component, Input, OnDestroy, OnInit} from '@angular/core';
+import {HttpHeaders, HttpResponse} from '@angular/common/http';
+import {ActivatedRoute} from '@angular/router';
+import {Subscription} from 'rxjs';
+import {JhiEventManager, JhiParseLinks} from 'ng-jhipster';
+import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 
-import { IArticle } from 'app/shared/model/article.model';
+import {IArticle} from 'app/shared/model/article.model';
 
-import { ITEMS_PER_PAGE } from 'app/shared/constants/pagination.constants';
-import { ArticleService } from './article.service';
-import { ArticleDeleteDialogComponent } from './article-delete-dialog.component';
+import {ITEMS_PER_PAGE} from 'app/shared/constants/pagination.constants';
 import {ICategory} from "app/shared/model/category.model";
+import {ArticleService} from "app/entities/article/article.service";
+import {ArticleDeleteDialogComponent} from "app/entities/article/article-delete-dialog.component";
 
 @Component({
-  selector: 'jhi-article',
-  templateUrl: './article.component.html',
+  selector: 'jhi-article-category',
+  templateUrl: './article-category.component.html',
 })
-export class ArticleComponent implements OnInit, OnDestroy {
+export class ArticleCategoryComponent implements OnInit, OnDestroy {
   articles: IArticle[];
   eventSubscriber?: Subscription;
   itemsPerPage: number;

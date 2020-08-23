@@ -6,16 +6,19 @@ import {Category, ICategory} from "app/shared/model/category.model";
 import {FlatTreeControl} from '@angular/cdk/tree';
 import {MatTreeFlatDataSource, MatTreeFlattener} from '@angular/material/tree';
 import {ConfirmationDialogService} from "app/shared/confirm/ConfirmationDialogService";
+import {v4 as uuidv4} from 'uuid';
 
 export class CategoryCompleteModel extends Category {
   public children: CategoryCompleteModel[];
 
   public level: number;
+  public uid: string;
 
   constructor(category: Category, children: CategoryCompleteModel[], level = 0) {
     super(category.id, category.name, category.transiant, category.categoryParentId, category.attributs, category.attributs);
     this.children = children;
     this.level = level;
+    this.uid = uuidv4();
   }
 }
 
@@ -235,6 +238,22 @@ export class CategoryDropdownComponent implements OnInit, OnDestroy {
         },
         error => this.errorEmitter.emit(error)
       );
+  }
+
+  deleteNewItem(node: any): void {
+    let index: number | undefined;
+    let parentChidrenArray : CategoryCompleteModel[] | undefined;
+    index = this.dataSource.data.findIndex(child => child.uid === node.uid);
+    parentChidrenArray = this.dataSource.data;
+    if (index === undefined || index === -1) {
+      parentChidrenArray = this.findParentInArray(this.dataSource.data, node)?.children;
+      index = parentChidrenArray?.findIndex(child => child.uid === node.uid);
+    }
+    if (parentChidrenArray && index !== undefined && index > -1) {
+      parentChidrenArray.splice(index, 1);
+      const a = this.dataSource.data;
+      this.dataSource.data = a;
+    }
   }
 
   deleteItem(node: any): void {

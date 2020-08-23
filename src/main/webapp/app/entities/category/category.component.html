@@ -2,7 +2,8 @@
     <h2 id="page-heading">
         <span jhiTranslate="ecommerceApp.category.home.title">Categories</span>
 
-        <button *jhiHasAnyAuthority="'ROLE_ADMIN'" id="jh-reindex-entity" class="btn btn-primary float-right jh-create-entity create-category" (click)="reindex()">
+        <button *jhiHasAnyAuthority="'ROLE_ADMIN'" id="jh-reindex-entity"
+                class="btn btn-primary float-right jh-create-entity create-category" (click)="reindex()">
             <fa-icon icon="plus"></fa-icon>
             <span class="hidden-sm-down">
             Reindex
@@ -16,11 +17,38 @@
 
     <div class="row">
         <div class="col-4">
-            <jhi-category-dropdown [creation]="true" (changeCategory)="makeCategoryActive($event)"></jhi-category-dropdown>
+            <jhi-category-dropdown [creation]="true"
+                                   (changeCategory)="makeCategoryActive($event)"></jhi-category-dropdown>
         </div>
         <div class="col-8">
-            <jhi-category-update *ngIf="categoryActive_" [category]="categoryActive_"></jhi-category-update>
-            <jhi-attribut-category [category]="categoryActive_"></jhi-attribut-category>
+            <div *ngIf="categoryActive_">
+                <ul ngbNav #nav="ngbNav" [(activeId)]="active" class="nav-tabs">
+                    <li [ngbNavItem]="1">
+                        <a ngbNavLink>Mise à jour</a>
+                        <ng-template ngbNavContent>
+                            <jhi-category-update *ngIf="categoryActive_"
+                                                 [category]="categoryActive_"></jhi-category-update>
+                        </ng-template>
+                    </li>
+                    <li [ngbNavItem]="2">
+                        <a ngbNavLink>Attribut</a>
+                        <ng-template ngbNavContent>
+                            <div>
+                                <jhi-attribut-category [category]="categoryActive_"></jhi-attribut-category>
+                            </div>
+                        </ng-template>
+                    </li>
+                    <li [ngbNavItem]="3">
+                        <a ngbNavLink>Article</a>
+                        <ng-template ngbNavContent>
+                            <div>
+                                <jhi-article-category></jhi-article-category>
+                            </div>
+                        </ng-template>
+                    </li>
+                </ul>
+                <div [ngbNavOutlet]="nav" class="mt-2"></div>
+            </div>
         </div>
     </div>
 

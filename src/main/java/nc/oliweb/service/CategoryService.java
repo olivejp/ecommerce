@@ -55,4 +55,14 @@ public interface CategoryService {
      * @return void
      */
     void reindex();
+
+    /**
+     * Search with queryStringQuery
+     *
+     * @param query
+     * @return
+     */
+    List<CategoryDTO> searchQueryString(String query);
+
+    List<CategoryDTO> getAvailableParents(long idCategory);
 }

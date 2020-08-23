@@ -1,6 +1,6 @@
 import {Injectable, OnDestroy} from '@angular/core';
 import {HttpClient, HttpResponse} from '@angular/common/http';
-import {Observable, Subject} from 'rxjs';
+import {Observable, Subject, of} from 'rxjs';
 
 import {SERVER_API_URL} from 'app/app.constants';
 import {createRequestOption, Search} from 'app/shared/util/request-util';
@@ -55,6 +55,10 @@ export class CategoryService implements OnDestroy {
   search(req: Search): Observable<EntityArrayResponseType> {
     const options = createRequestOption(req);
     return this.http.get<ICategory[]>(this.resourceSearchUrl, {params: options, observe: 'response'});
+  }
+
+  getAvaialbleParents(idCategory: number | undefined): Observable<EntityArrayResponseType> {
+    return (idCategory) ? this.http.get<ICategory[]>(`${this.resourceUrl}/${idCategory}/availableParents`, {observe: 'response'}) : of();
   }
 
   reindex(): Observable<any> {

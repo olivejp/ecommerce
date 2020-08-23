@@ -6,6 +6,7 @@ import nc.oliweb.repository.search.CategorySearchRepository;
 import nc.oliweb.service.CategoryService;
 import nc.oliweb.service.dto.CategoryDTO;
 import nc.oliweb.service.mapper.CategoryMapper;
+import nc.oliweb.web.rest.errors.CategoryAlertException;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.slf4j.Logger;
@@ -13,12 +14,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
 import static org.elasticsearch.index.query.QueryBuilders.wildcardQuery;
 
 /**
@@ -42,6 +42,17 @@ public class CategoryServiceImpl implements CategoryService {
         this.categorySearchRepository = categorySearchRepository;
     }
 
+    private void grabFamily(Long idToSearch, Set<Long> listToComplete) {
+        if (listToComplete == null) {
+            listToComplete = new HashSet<>();
+        }
+        List<Category> children = categoryRepository.findAllByCategoryParent_Id(idToSearch);
+        for (Category child : children) {
+            listToComplete.add(child.getId());
+            grabFamily(child.getId(), listToComplete);
+        }
+    }
+
     /**
      * Save a category.
      *
@@ -49,9 +60,19 @@ public class CategoryServiceImpl implements CategoryService {
      * @return the persisted entity.
      */
     @Override
-    public CategoryDTO save(CategoryDTO categoryDTO) {
+    public CategoryDTO save(CategoryDTO categoryDTO) throws CategoryAlertException {
         log.debug("Request to save Category : {}", categoryDTO);
         Category category = categoryMapper.toEntity(categoryDTO);
+
+        if (category.getId() != null) {
+            Set<Long> setIds = new HashSet<>();
+            grabFamily(category.getId(), setIds);
+
+            if (!setIds.isEmpty() && setIds.contains(categoryDTO.getCategoryParentId())) {
+                throw new CategoryAlertException("La catégorie parent ne peut pas être un des enfants", "Category", "categoryParentError", "categoryParentId");
+            }
+        }
+
         category = categoryRepository.save(category);
         CategoryDTO result = categoryMapper.toDto(category);
         categorySearchRepository.save(category);
@@ -119,10 +140,30 @@ public class CategoryServiceImpl implements CategoryService {
             .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
+    public List<CategoryDTO> searchQueryString(String query) {
+        log.debug("Request to search Categories for query {}", query);
+        return StreamSupport
+            .stream(categorySearchRepository.search(queryStringQuery(query)).spliterator(), false)
+            .map(categoryMapper::toDto)
+            .collect(Collectors.toList());
+    }
+
     @Override
     @Transactional(readOnly = true)
     public void reindex() {
         log.debug("Request to reindex Categories");
         categoryRepository.findAll().forEach(categorySearchRepository::save);
+    }
+
+    @Override
+    public List<CategoryDTO> getAvailableParents(long idCategory) {
+        log.debug("Request to get all the available parents");
+        Set<Long> idsFamily = new HashSet<>();
+        idsFamily.add(idCategory);
+        grabFamily(idCategory, idsFamily);
+        return categoryRepository.findAllByCategoryParentIdIsNotIn(new ArrayList<>(idsFamily))
+            .stream().map(categoryMapper::toDto)
+            .collect(Collectors.toList());
     }
 }

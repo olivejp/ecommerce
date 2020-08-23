@@ -1,5 +1,8 @@
-import { NgModule } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import {NgModule} from '@angular/core';
+import {RouterModule} from '@angular/router';
+import {CategoryService} from "app/entities/category/category.service";
+import {ArticleService} from "app/entities/article/article.service";
+import {AttributService} from "app/entities/attribut/attribut.service";
 
 @NgModule({
   imports: [
@@ -47,5 +50,7 @@ import { RouterModule } from '@angular/router';
       /* jhipster-needle-add-entity-route - JHipster will add entity modules routes here */
     ]),
   ],
+  providers: [CategoryService, ArticleService, AttributService]
 })
-export class EcommerceEntityModule {}
+export class EcommerceEntityModule {
+}

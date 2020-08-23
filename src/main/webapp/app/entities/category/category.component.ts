@@ -1,6 +1,6 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {HttpResponse} from '@angular/common/http';
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {Subscription} from 'rxjs';
 import {JhiEventManager} from 'ng-jhipster';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
@@ -19,12 +19,14 @@ export class CategoryComponent implements OnInit, OnDestroy {
   categories?: ICategory[];
   eventSubscriber?: Subscription;
   currentSearch: string;
+  active = 1;
 
   constructor(
     protected categoryService: CategoryService,
     protected eventManager: JhiEventManager,
     protected modalService: NgbModal,
-    protected activatedRoute: ActivatedRoute
+    protected activatedRoute: ActivatedRoute,
+    protected router: Router
   ) {
     this.currentSearch =
       this.activatedRoute.snapshot && this.activatedRoute.snapshot.queryParams['search']
@@ -87,6 +89,14 @@ export class CategoryComponent implements OnInit, OnDestroy {
   reloadCategories(categoryUpdated: ICategory | null): void {
     if (categoryUpdated) {
       this.categoryUpdated_ = categoryUpdated;
+    }
+  }
+
+  navigate(update: 'ATTRIBUT' | 'UPDATE'): void {
+    if (update === 'ATTRIBUT') {
+      this.router.navigate([this.categoryActive_?.id, 'attribut', 'new'], {relativeTo: this.activatedRoute});
+    } else {
+      this.router.navigate([this.categoryActive_?.id, 'edit'], {relativeTo: this.activatedRoute});
     }
   }
 }

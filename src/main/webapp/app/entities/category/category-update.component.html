@@ -30,13 +30,16 @@
                            formControlName="transiant"/>
                 </div>
 
-                                <div class="form-group">
-                                    <label class="form-control-label" jhiTranslate="ecommerceApp.category.categoryParent" for="field_categoryParent">Category Parent</label>
-                                    <select class="form-control" id="field_categoryParent" name="categoryParent" formControlName="categoryParentId">
-                                        <option [ngValue]="null"></option>
-                                        <option [ngValue]="categoryOption.id" *ngFor="let categoryOption of categoryparents; trackBy: trackById">{{ categoryOption.name }}</option>
-                                    </select>
-                                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="ecommerceApp.category.categoryParent"
+                           for="field_categoryParent">Category Parent</label>
+                    <select class="form-control" id="field_categoryParent" name="categoryParent"
+                            formControlName="categoryParentId">
+                        <option [ngValue]="null"></option>
+                        <option [ngValue]="categoryOption.id"
+                                *ngFor="let categoryOption of categoryparents; trackBy: trackById">{{ categoryOption.name }}</option>
+                    </select>
+                </div>
 
             </div>
 

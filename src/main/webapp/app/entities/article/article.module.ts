@@ -9,8 +9,11 @@ import { ArticleDeleteDialogComponent } from './article-delete-dialog.component'
 import { articleRoute } from './article.route';
 
 @NgModule({
-  imports: [EcommerceSharedModule, RouterModule.forChild(articleRoute)],
-  declarations: [ArticleComponent, ArticleDetailComponent, ArticleUpdateComponent, ArticleDeleteDialogComponent],
-  entryComponents: [ArticleDeleteDialogComponent],
+    imports: [EcommerceSharedModule, RouterModule.forChild(articleRoute)],
+    declarations: [ArticleComponent, ArticleDetailComponent, ArticleUpdateComponent, ArticleDeleteDialogComponent],
+    entryComponents: [ArticleDeleteDialogComponent],
+    exports: [
+        ArticleComponent
+    ]
 })
 export class EcommerceArticleModule {}

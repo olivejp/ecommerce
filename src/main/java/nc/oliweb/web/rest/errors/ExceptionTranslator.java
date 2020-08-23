@@ -21,6 +21,8 @@ import org.zalando.problem.violations.ConstraintViolationProblem;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -118,6 +120,20 @@ public class ExceptionTranslator implements ProblemHandling, SecurityAdviceTrait
         Problem problem = Problem.builder()
             .withStatus(Status.CONFLICT)
             .with(MESSAGE_KEY, ErrorConstants.ERR_CONCURRENCY_FAILURE)
+            .build();
+        return create(ex, problem, request);
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<Problem> handleCategoryAlertException(CategoryAlertException ex, NativeWebRequest request) {
+
+        List<FieldErrorVM> listFieldErrors = new ArrayList<>();
+        listFieldErrors.add(new FieldErrorVM(ex.getEntityName(), ex.getErrorAttribute(), ex.getMessage()));
+
+        Problem problem = Problem.builder()
+            .withStatus(Status.BAD_REQUEST)
+            .with(MESSAGE_KEY, ex.getMessage())
+            .with(FIELD_ERRORS_KEY, listFieldErrors)
             .build();
         return create(ex, problem, request);
     }
